@@ -1,0 +1,145 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Criminal Record System</title>
+    <!-- Bootstrap CSS -->
+    <link
+      href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css"
+      rel="stylesheet"
+    />
+    <!-- Custom CSS (optional) -->
+    <style>
+      body {
+        padding-top: 20px;
+      }
+    </style>
+  </head>
+  <body>
+    <div class="container">
+      <h1 class="text-center">Criminal Record System</h1>
+      <div id="status" class="alert alert-info text-center">Not connected</div>
+      <div class="text-center">
+        <button class="btn btn-primary" onclick="connectMetamask()">
+          Connect Metamask
+        </button>
+      </div>
+
+      <h2 class="mt-4">Add Record</h2>
+      <form id="recordForm">
+        <div class="form-group">
+          <label>Name:</label>
+          <input type="text" class="form-control" id="name" required />
+        </div>
+        <div class="form-group">
+          <label>Age:</label>
+          <input type="number" class="form-control" id="age" required />
+        </div>
+        <div class="form-group">
+          <label>City:</label>
+          <input type="text" class="form-control" id="city" required />
+        </div>
+        <div class="form-group">
+          <label>Region:</label>
+          <input type="text" class="form-control" id="region" required />
+        </div>
+        <div class="form-group">
+          <label>Crime:</label>
+          <input type="text" class="form-control" id="crime" required />
+        </div>
+        <div class="form-group">
+          <label>Punishment:</label>
+          <input type="text" class="form-control" id="punishment" required />
+        </div>
+        <button type="submit" class="btn btn-success">Add Record</button>
+      </form>
+
+      <h2 class="mt-4">All Records</h2>
+      <button class="btn btn-info" onclick="getRecords()">Get Records</button>
+      <pre id="records" class="mt-3"></pre>
+
+      <!-- Message alert -->
+      <div id="message" class="alert d-none mt-4"></div>
+    </div>
+
+    <!-- Bootstrap JS and dependencies -->
+    <script src="https://code.jquery.com/jquery-3.5.1.slim.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/@popperjs/core@2.5.4/dist/umd/popper.min.js"></script>
+    <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/js/bootstrap.min.js"></script>
+    <!-- Web3.js -->
+    <script src="https://cdn.jsdelivr.net/npm/web3/dist/web3.min.js"></script>
+    <script>
+      document
+        .getElementById("recordForm")
+        .addEventListener("submit", async (event) => {
+          event.preventDefault();
+          await addRecord();
+        });
+
+      async function connectMetamask() {
+        if (window.ethereum) {
+          window.web3 = new Web3(window.ethereum);
+          try {
+            await window.ethereum.enable();
+            document.getElementById("status").innerHTML =
+              "Connected to Metamask";
+          } catch (error) {
+            console.error("User denied account access");
+          }
+        } else {
+          console.error(
+            "Non-Ethereum browser detected. You should consider trying MetaMask!"
+          );
+        }
+      }
+
+      async function addRecord() {
+        const name = document.getElementById("name").value;
+        const age = document.getElementById("age").value;
+        const city = document.getElementById("city").value;
+        const region = document.getElementById("region").value;
+        const crime = document.getElementById("crime").value;
+        const punishment = document.getElementById("punishment").value;
+
+        console.log("MASUKKKK");
+        const response = await fetch("/add_record", {
+          method: "POST",
+          headers: {
+            "Content-Type": "application/json",
+          },
+          body: JSON.stringify({ name, age, city, region, crime, punishment }),
+        });
+        const data = await response.json();
+        console.log("MASUKKKK");
+        if (data.status === "Record added") {
+          showMessage("Record added successfully!", "success");
+        } else {
+          showMessage("Failed to add record.", "danger");
+        }
+      }
+
+      async function getRecords() {
+        const response = await fetch("/get_records");
+        const records = await response.json();
+        document.getElementById("records").innerHTML = JSON.stringify(
+          records,
+          null,
+          2
+        );
+      }
+
+      function showMessage(message, type) {
+        const messageDiv = document.getElementById("message");
+        messageDiv.innerHTML = message;
+        messageDiv.className = `alert alert-${type}`;
+        messageDiv.classList.remove("d-none");
+
+        // Hide the message after 5 seconds
+        setTimeout(() => {
+          messageDiv.classList.add("d-none");
+        }, 5000);
+      }
+    </script>
+  </body>
+</html>

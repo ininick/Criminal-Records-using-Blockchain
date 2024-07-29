@@ -1,0 +1,445 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Criminal Record System</title>
+    <!-- Bootstrap CSS -->
+    <link
+      href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css"
+      rel="stylesheet"
+    />
+    <style>
+      body {
+        padding-top: 10px;
+        margin-bottom: 50px;
+      }
+      .pagination {
+        justify-content: center;
+      }
+      .footer {
+        position: fixed;
+        left: 0;
+        bottom: 0;
+        width: 100%;
+        background-color: #f8f9fa;
+        text-align: center;
+        padding: 10px 0;
+        font-size: 14px;
+      }
+    </style>
+  </head>
+  <body>
+    <nav class="navbar navbar-expand-lg navbar-light bg-light">
+      <a class="navbar-brand" href="#">Criminal Record System</a>
+      <div class="collapse navbar-collapse">
+        <ul class="navbar-nav mr-auto">
+          <li class="nav-item">
+            <a
+              class="nav-link"
+              href="#"
+              onclick="showSection('addRecordSection')"
+              >Add Record</a
+            >
+          </li>
+          <li class="nav-item">
+            <a
+              class="nav-link"
+              href="#"
+              onclick="showSection('updateRecordSection')"
+              >Update Record</a
+            >
+          </li>
+          <li class="nav-item">
+            <a
+              class="nav-link"
+              href="#"
+              onclick="showSection('getRecordsSection')"
+              >Get Records</a
+            >
+          </li>
+        </ul>
+      </div>
+    </nav>
+    <div class="container">
+      <div id="addRecordSection" class="section">
+        <h2 class="mt-4">Add Record</h2>
+        <button
+          id="connectMetaMaskAdd"
+          class="btn btn-primary"
+          onclick="connectMetamask()"
+        >
+          Connect to MetaMask
+        </button>
+        <div id="metaMaskStatusAdd" class="mt-2"></div>
+        <div id="addMessage" class="alert d-none"></div>
+        <form id="recordForm">
+          <div class="form-group">
+            <label>Name:</label>
+            <input type="text" class="form-control" id="name" required />
+          </div>
+          <div class="form-group">
+            <label>Age:</label>
+            <input type="number" class="form-control" id="age" required />
+          </div>
+          <div class="form-group">
+            <label>City:</label>
+            <input type="text" class="form-control" id="city" required />
+          </div>
+          <div class="form-group">
+            <label>Region:</label>
+            <input type="text" class="form-control" id="region" required />
+          </div>
+          <div class="form-group">
+            <label>Crime:</label>
+            <input type="text" class="form-control" id="crime" required />
+          </div>
+          <div class="form-group">
+            <label>Punishment:</label>
+            <input type="text" class="form-control" id="punishment" required />
+          </div>
+          <button
+            type="submit"
+            class="btn btn-success"
+            id="addRecordButton"
+            disabled
+          >
+            Add Record
+          </button>
+        </form>
+      </div>
+
+      <div id="updateRecordSection" class="section d-none">
+        <h2 class="mt-4">Update Record</h2>
+        <button
+          id="connectMetaMaskUpdate"
+          class="btn btn-primary"
+          onclick="connectMetamask()"
+        >
+          Connect to MetaMask
+        </button>
+        <div id="metaMaskStatusUpdate" class="mt-2"></div>
+        <div id="updateMessage" class="alert d-none"></div>
+        <form id="updateForm">
+          <div class="form-group">
+            <label>Record ID:</label>
+            <input type="number" class="form-control" id="recordId" required />
+          </div>
+          <div class="form-group">
+            <label>Name:</label>
+            <input type="text" class="form-control" id="updateName" required />
+          </div>
+          <div class="form-group">
+            <label>Age:</label>
+            <input type="number" class="form-control" id="updateAge" required />
+          </div>
+          <div class="form-group">
+            <label>City:</label>
+            <input type="text" class="form-control" id="updateCity" required />
+          </div>
+          <div class="form-group">
+            <label>Region:</label>
+            <input
+              type="text"
+              class="form-control"
+              id="updateRegion"
+              required
+            />
+          </div>
+          <div class="form-group">
+            <label>Crime:</label>
+            <input type="text" class="form-control" id="updateCrime" required />
+          </div>
+          <div class="form-group">
+            <label>Punishment:</label>
+            <input
+              type="text"
+              class="form-control"
+              id="updatePunishment"
+              required
+            />
+          </div>
+          <button
+            type="submit"
+            class="btn btn-warning"
+            id="updateRecordButton"
+            disabled
+          >
+            Update Record
+          </button>
+        </form>
+      </div>
+
+      <div id="getRecordsSection" class="section d-none">
+        <h2 class="mt-4">All Records</h2>
+        <div id="getMessage" class="alert d-none"></div>
+        <div id="connectMessage" class="alert alert-warning d-none">
+          Please connect to MetaMask to view records.
+        </div>
+        <table class="table table-striped mt-3">
+          <thead>
+            <tr>
+              <th>ID</th>
+              <th>Name</th>
+              <th>Age</th>
+              <th>City</th>
+              <th>Region</th>
+              <th>Crime</th>
+              <th>Punishment</th>
+              <th>Actions</th>
+            </tr>
+          </thead>
+          <tbody id="recordsTableBody">
+            <!-- Records will be appended here -->
+          </tbody>
+        </table>
+        <nav aria-label="Page navigation">
+          <ul class="pagination" id="pagination">
+            <!-- Pagination buttons will be appended here -->
+          </ul>
+        </nav>
+      </div>
+    </div>
+
+    <div class="footer">&copy; 2024 REMINE. Designed by Nick Mathew</div>
+
+    <!-- Bootstrap JS and dependencies -->
+    <script src="https://code.jquery.com/jquery-3.5.1.slim.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/@popperjs/core@2.5.4/dist/umd/popper.min.js"></script>
+    <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/js/bootstrap.min.js"></script>
+    <!-- Web3.js -->
+    <script src="https://cdn.jsdelivr.net/npm/web3/dist/web3.min.js"></script>
+    <script>
+      let isMetaMaskConnected = false;
+      let records = [];
+      const recordsPerPage = 20;
+      let currentPage = 1;
+
+      document
+        .getElementById("recordForm")
+        .addEventListener("submit", async (event) => {
+          event.preventDefault();
+          if (isMetaMaskConnected) {
+            await addRecord();
+          } else {
+            alert("Please connect to MetaMask first.");
+          }
+        });
+
+      document
+        .getElementById("updateForm")
+        .addEventListener("submit", async (event) => {
+          event.preventDefault();
+          if (isMetaMaskConnected) {
+            await updateRecord();
+          } else {
+            alert("Please connect to MetaMask first.");
+          }
+        });
+
+      function showSection(sectionId) {
+        document.querySelectorAll(".section").forEach((section) => {
+          section.classList.add("d-none");
+        });
+        document.getElementById(sectionId).classList.remove("d-none");
+        if (sectionId === "getRecordsSection") {
+          if (isMetaMaskConnected) {
+            getRecords();
+            document.getElementById("connectMessage").classList.add("d-none");
+          } else {
+            document
+              .getElementById("connectMessage")
+              .classList.remove("d-none");
+            document.getElementById("recordsTableBody").innerHTML = "";
+            document.getElementById("pagination").innerHTML = "";
+          }
+        }
+      }
+
+      async function connectMetamask() {
+        if (window.ethereum) {
+          window.web3 = new Web3(window.ethereum);
+          try {
+            await window.ethereum.enable();
+            isMetaMaskConnected = true;
+            document.getElementById("metaMaskStatusAdd").innerHTML =
+              "Connected to MetaMask";
+            document.getElementById("metaMaskStatusUpdate").innerHTML =
+              "Connected to MetaMask";
+            document.getElementById("addRecordButton").disabled = false;
+            document.getElementById("updateRecordButton").disabled = false;
+            document
+              .querySelectorAll('button[id^="connectMetaMask"]')
+              .forEach((btn) => {
+                btn.classList.add("d-none");
+              });
+          } catch (error) {
+            console.error("User denied account access");
+          }
+        } else {
+          console.error(
+            "Non-Ethereum browser detected. You should consider trying MetaMask!"
+          );
+        }
+      }
+
+      async function addRecord() {
+        const name = document.getElementById("name").value;
+        const age = document.getElementById("age").value;
+        const city = document.getElementById("city").value;
+        const region = document.getElementById("region").value;
+        const crime = document.getElementById("crime").value;
+        const punishment = document.getElementById("punishment").value;
+
+        const response = await fetch("/add_record", {
+          method: "POST",
+          headers: {
+            "Content-Type": "application/json",
+          },
+          body: JSON.stringify({ name, age, city, region, crime, punishment }),
+        });
+        const data = await response.json();
+        if (data.status === "Record added") {
+          showMessage("Record added successfully!", "success", "addMessage");
+        } else {
+          showMessage("Failed to add record.", "danger", "addMessage");
+        }
+      }
+
+      async function updateRecord() {
+        const id = document.getElementById("recordId").value;
+        const name = document.getElementById("updateName").value;
+        const age = document.getElementById("updateAge").value;
+        const city = document.getElementById("updateCity").value;
+        const region = document.getElementById("updateRegion").value;
+        const crime = document.getElementById("updateCrime").value;
+        const punishment = document.getElementById("updatePunishment").value;
+
+        const response = await fetch("/update_record", {
+          method: "POST",
+          headers: {
+            "Content-Type": "application/json",
+          },
+          body: JSON.stringify({
+            index: id,
+            name,
+            age,
+            city,
+            region,
+            crime,
+            punishment,
+          }),
+        });
+        console.log("MASUK");
+        const data = await response.json();
+        if (data.status === "Record updated") {
+          showMessage(
+            "Record updated successfully!",
+            "success",
+            "updateMessage"
+          );
+        } else {
+          showMessage("Failed to update record.", "danger", "updateMessage");
+        }
+      }
+
+      async function getRecords() {
+        const response = await fetch("/get_records");
+        records = await response.json();
+        currentPage = 1;
+        displayRecords();
+        setupPagination();
+      }
+
+      function displayRecords() {
+        const start = (currentPage - 1) * recordsPerPage;
+        const end = start + recordsPerPage;
+        const paginatedRecords = records.slice(start, end);
+        const recordsTableBody = document.getElementById("recordsTableBody");
+        recordsTableBody.innerHTML = "";
+
+        paginatedRecords.forEach((record, index) => {
+          const row = document.createElement("tr");
+          row.innerHTML = `
+            <td>${start + index + 1}</td>
+            <td>${record[0]}</td>
+            <td>${record[1]}</td>
+            <td>${record[2]}</td>
+            <td>${record[3]}</td>
+            <td>${record[4]}</td>
+            <td>${record[5]}</td>
+            <td>
+              <button class="btn btn-warning btn-sm" onclick="showUpdateForm(${
+                start + index
+              })">Update</button>
+              <button class="btn btn-danger btn-sm" onclick="deleteRecord(${
+                start + index
+              })">Delete</button>
+            </td>
+          `;
+          recordsTableBody.appendChild(row);
+        });
+      }
+
+      function setupPagination() {
+        const totalPages = Math.ceil(records.length / recordsPerPage);
+        const pagination = document.getElementById("pagination");
+        pagination.innerHTML = "";
+
+        for (let i = 1; i <= totalPages; i++) {
+          const li = document.createElement("li");
+          li.className = "page-item" + (i === currentPage ? " active" : "");
+          li.innerHTML = `<a class="page-link" href="#" onclick="gotoPage(${i})">${i}</a>`;
+          pagination.appendChild(li);
+        }
+      }
+
+      function gotoPage(page) {
+        currentPage = page;
+        displayRecords();
+        setupPagination();
+      }
+
+      function showMessage(message, type, elementId) {
+        const messageDiv = document.getElementById(elementId);
+        messageDiv.innerHTML = message;
+        messageDiv.className = `alert alert-${type}`;
+        messageDiv.classList.remove("d-none");
+
+        setTimeout(() => {
+          messageDiv.classList.add("d-none");
+        }, 5000);
+      }
+
+      function showUpdateForm(recordIndex) {
+        // Fill update form with data from the selected record
+        const record = records[recordIndex];
+        document.getElementById("recordId").value = recordIndex;
+        document.getElementById("updateName").value = record[0];
+        document.getElementById("updateAge").value = record[1];
+        document.getElementById("updateCity").value = record[2];
+        document.getElementById("updateRegion").value = record[3];
+        document.getElementById("updateCrime").value = record[4];
+        document.getElementById("updatePunishment").value = record[5];
+        showSection("updateRecordSection");
+      }
+
+      async function deleteRecord(recordIndex) {
+        const response = await fetch("/delete_record", {
+          method: "POST",
+          headers: {
+            "Content-Type": "application/json",
+          },
+          body: JSON.stringify({ index: recordIndex }),
+        });
+        const data = await response.json();
+        if (data.status === "Record deleted") {
+          showMessage("Record deleted successfully!", "success", "getMessage");
+          getRecords(); // Refresh the records list
+        } else {
+          showMessage("Failed to delete record.", "danger", "getMessage");
+        }
+      }
+    </script>
+  </body>
+</html>
