@@ -7,6 +7,7 @@ Hello, here is detailed about this project:
 4. Ganache
 5. Node.js
 6. npm
+
 Step by step:
 1. Clone this repository
 2. Make virtual environment (venv) on the repository folder. Use python -m venv [name_venv]
